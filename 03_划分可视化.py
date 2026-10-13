@@ -100,5 +100,6 @@ for 类别 in (0, 1):
 print(f"图片已保存：{输出_png}")
 输出_svg = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                         "images", "03_train_test_split.svg")
-图.savefig(输出_svg, format="svg")
+# dpi 只影响内嵌的点阵图层（2 万个点），坐标轴和文字仍是矢量，不糊
+图.savefig(输出_svg, format="svg", dpi=40)
 print(f"矢量图已保存：{输出_svg}")
