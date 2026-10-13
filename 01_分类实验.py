@@ -2,14 +2,14 @@
 """
 01_分类实验.py —— 对应 4-1-2 概念：分类问题
 
-直觉：分类 = 给东西贴标签。这里用乳腺癌数据集（breast_cancer），
-根据 30 个细胞核测量指标，判断肿瘤是良性(0)还是恶性(1)。
+直觉：分类 = 给东西贴标签。这里不用现成数据集，
+现场随机生成 20000 个样本、20 个特征的二分类数据（类别 0/1）。
 
 做法：同一份训练/测试集划分下，训练 4 个经典分类器，
 直接对比它们在测试集上的准确率，看谁泛化得最好。
 """
 
-from sklearn.datasets import load_breast_cancer
+from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
@@ -18,18 +18,24 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
-# 1. 加载数据（sklearn 自带，离线可用）
-数据 = load_breast_cancer()
-X, y = 数据.data, 数据.target
-print(f"数据集：{数据.DESCR.splitlines()[0]}")
-print(f"样本数：{X.shape[0]}，特征数：{X.shape[1]}，类别：{list(数据.target_names)}")
-print(f"类别分布：良性={(y == 0).sum()} 个，恶性={(y == 1).sum()} 个\n")
+# 1. 自己生成数据（不用现成数据集）
+# SEED = None 表示每次运行都重新随机生成；想复现某次结果就改成任意整数
+SEED = None
+X, y = make_classification(
+    n_samples=20000, n_features=20,
+    n_informative=12, n_redundant=4,
+    n_classes=2, flip_y=0.02, class_sep=1.2,
+    random_state=SEED,
+)
+print(f"数据集：现场随机生成（make_classification）")
+print(f"样本数：{X.shape[0]}，特征数：{X.shape[1]}")
+print(f"类别分布：类别0={(y == 0).sum()} 个，类别1={(y == 1).sum()} 个\n")
 
 # 2. 划分训练集 / 测试集
 # stratify=y 是"分层划分"：保证训练集和测试集里良/恶性比例都和原数据一致，
 # 避免运气不好导致某一类在测试集里太少，测不准。
 X_训练, X_测试, y_训练, y_测试 = train_test_split(
-    X, y, test_size=0.2, random_state=42, stratify=y
+    X, y, test_size=0.2, random_state=SEED, stratify=y
 )
 print(f"训练集：{len(X_训练)} 个样本，测试集：{len(X_测试)} 个样本\n")
 
@@ -44,8 +50,8 @@ X_测试 = scaler.transform(X_测试)
 模型们 = {
     "逻辑回归": LogisticRegression(max_iter=2000),
     "K近邻(k=5)": KNeighborsClassifier(),
-    "决策树": DecisionTreeClassifier(random_state=42),
-    "随机森林": RandomForestClassifier(random_state=42),
+    "决策树": DecisionTreeClassifier(random_state=SEED),
+    "随机森林": RandomForestClassifier(random_state=SEED),
 }
 
 # 5. 逐个训练并打分
