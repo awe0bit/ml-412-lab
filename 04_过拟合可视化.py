@@ -55,8 +55,8 @@ plt.rcParams["axes.unicode_minus"] = False
 plt.rcParams["svg.fonttype"] = "path"  # SVG 里文字转成矢量路径，换电脑也不乱码
 
 # 1. 数据准备：现场随机生成（和 01 同一套生成参数）
-# SEED = None 表示每次运行都重新随机生成；想复现某次结果就改成任意整数
-SEED = None
+# SEED 固定则每次运行生成同一批数据（结果可复现）；改成 None 则每次运行重新随机
+SEED = 7
 X, y = make_classification(
     n_samples=20000, n_features=20,
     n_informative=12, n_redundant=4,
