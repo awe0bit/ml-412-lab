@@ -50,6 +50,7 @@ def 中文字体():
 有中文 = 字体 is not None
 标签参数 = {"fontproperties": 字体} if 有中文 else {}
 plt.rcParams["axes.unicode_minus"] = False  # 防止负号显示成方框
+plt.rcParams["svg.fonttype"] = "path"  # SVG 里文字转成矢量路径，换电脑也不乱码
 
 # 1. 数据：现场随机生成 -> 标准化 -> PCA 压到 2 维 -> 分层划分
 # SEED = None 表示每次运行都重新随机生成；想复现某次结果就改成任意整数
@@ -77,9 +78,11 @@ for 类别 in (0, 1):
     测试点 = X_测试[y_测试 == 类别]
     名 = 类别名[类别][0] if 有中文 else 类别名[类别][1]
     轴.scatter(训练点[:, 0], 训练点[:, 1], c=颜色[类别], s=6, alpha=0.35,
+               rasterized=True,  # 2 万个点转成内嵌位图，SVG 体积才压得住
                label=(f"训练集·{名}" if 有中文 else f"train·{名}"))
     轴.scatter(测试点[:, 0], 测试点[:, 1], c=颜色[类别], s=14,
                marker="^", edgecolors="black", linewidths=0.6, alpha=0.6,
+               rasterized=True,
                label=(f"测试集·{名}" if 有中文 else f"test·{名}"))
 
 轴.set_title("训练集 / 测试集划分可视化（PCA 降到 2 维）" if 有中文
@@ -90,7 +93,12 @@ for 类别 in (0, 1):
 图.tight_layout()
 
 # 3. 存图（和脚本同目录下的 images 文件夹）
-输出 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                     "images", "03_train_test_split.png")
-图.savefig(输出, dpi=150)
-print(f"图片已保存：{输出}")
+# PNG 自己看，SVG 传 GitHub（纯文本，仓库页面直接渲染）
+输出_png = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                        "images", "03_train_test_split.png")
+图.savefig(输出_png, dpi=150)
+print(f"图片已保存：{输出_png}")
+输出_svg = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                        "images", "03_train_test_split.svg")
+图.savefig(输出_svg, format="svg")
+print(f"矢量图已保存：{输出_svg}")

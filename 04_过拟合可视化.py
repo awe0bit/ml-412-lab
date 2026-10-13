@@ -52,6 +52,7 @@ def 中文字体():
 有中文 = 字体 is not None
 标签参数 = {"fontproperties": 字体} if 有中文 else {}
 plt.rcParams["axes.unicode_minus"] = False
+plt.rcParams["svg.fonttype"] = "path"  # SVG 里文字转成矢量路径，换电脑也不乱码
 
 # 1. 数据准备：现场随机生成（和 01 同一套生成参数）
 # SEED = None 表示每次运行都重新随机生成；想复现某次结果就改成任意整数
@@ -105,7 +106,12 @@ print("模型开始死记硬背训练集的噪声，这就是过拟合。")
 轴.set_ylim(min(测试分们) - 0.03, 1.02)
 图.tight_layout()
 
-输出 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                     "images", "04_overfitting_curve.png")
-图.savefig(输出, dpi=150)
-print(f"图片已保存：{输出}")
+输出_png = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                        "images", "04_overfitting_curve.png")
+图.savefig(输出_png, dpi=150)
+print(f"图片已保存：{输出_png}")
+# SVG 版（纯文本，可传 GitHub，仓库页面直接渲染）
+输出_svg = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                        "images", "04_overfitting_curve.svg")
+图.savefig(输出_svg, format="svg")
+print(f"矢量图已保存：{输出_svg}")

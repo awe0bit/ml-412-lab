@@ -34,11 +34,18 @@ pip install -r requirements.txt
 
 python 01_分类实验.py   # 分类算法对比
 python 02_回归实验.py   # 回归算法对比
-python 03_划分可视化.py # 生成 images/03_train_test_split.png
-python 04_过拟合可视化.py # 生成 images/04_overfitting_curve.png
+python 03_划分可视化.py # 生成 images/03_train_test_split.png + .svg
+python 04_过拟合可视化.py # 生成 images/04_overfitting_curve.png + .svg
 ```
 
 四张表/两张图跑完约 1 分钟。图片用无界面（Agg）后端直接存文件，服务器上也能跑。
+SVG 是矢量版，仓库页面直接渲染，放大不糊。
+
+## 效果图
+
+![训练集/测试集划分](images/03_train_test_split.svg)
+
+![过拟合曲线](images/04_overfitting_curve.svg)
 
 ## 预期输出（每次随机生成，数字会波动，看相对关系）
 
