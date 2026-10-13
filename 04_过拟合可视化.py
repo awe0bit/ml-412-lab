@@ -16,7 +16,7 @@ import matplotlib
 matplotlib.use("Agg")  # 无界面环境下把图存成文件，不弹窗
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
-from sklearn.datasets import load_breast_cancer
+from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeClassifier
@@ -53,10 +53,17 @@ def 中文字体():
 标签参数 = {"fontproperties": 字体} if 有中文 else {}
 plt.rcParams["axes.unicode_minus"] = False
 
-# 1. 数据准备（和 01 同一套划分，保证可比）
-X, y = load_breast_cancer(return_X_y=True)
+# 1. 数据准备：现场随机生成（和 01 同一套生成参数）
+# SEED = None 表示每次运行都重新随机生成；想复现某次结果就改成任意整数
+SEED = None
+X, y = make_classification(
+    n_samples=20000, n_features=20,
+    n_informative=12, n_redundant=4,
+    n_classes=2, flip_y=0.02, class_sep=1.2,
+    random_state=SEED,
+)
 X_训练, X_测试, y_训练, y_测试 = train_test_split(
-    X, y, test_size=0.2, random_state=42, stratify=y
+    X, y, test_size=0.2, random_state=SEED, stratify=y
 )
 scaler = StandardScaler().fit(X_训练)
 X_训练, X_测试 = scaler.transform(X_训练), scaler.transform(X_测试)
@@ -64,7 +71,7 @@ X_训练, X_测试 = scaler.transform(X_训练), scaler.transform(X_测试)
 # 2. 深度从 1 到 15，逐个训练并记录两条曲线
 深度们, 训练分们, 测试分们 = [], [], []
 for 深度 in range(1, 16):
-    树 = DecisionTreeClassifier(max_depth=深度, random_state=42)
+    树 = DecisionTreeClassifier(max_depth=深度, random_state=SEED)
     树.fit(X_训练, y_训练)
     深度们.append(深度)
     训练分们.append(accuracy_score(y_训练, 树.predict(X_训练)))
